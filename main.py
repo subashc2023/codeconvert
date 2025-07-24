@@ -5,6 +5,11 @@ from agno.agent import Agent
 from agno.models.google import Gemini
 from dotenv import load_dotenv
 
+# --- SECURITY WARNING ---
+# Hardcoding API keys in source code is not recommended.
+# It is best to use environment variables. This is for convenience only.
+API_KEY_IN_SOURCE = ""
+
 def load_snippets():
     snippets = []
     snippet_dir = "snippets"
@@ -99,6 +104,11 @@ def main():
             input_code = st.text_area("Paste your code or describe what you want to build", height=400)
             if st.button("Convert", use_container_width=True):
                 if input_code:
+                    gemini_api_key = os.environ.get("GEMINI_API_KEY") or API_KEY_IN_SOURCE
+                    if not gemini_api_key:
+                        st.error("A Gemini API key is required. Please add it to your environment variables as GEMINI_API_KEY or set it in the script.")
+                        st.stop()
+                    
                     xml_tags = "".join([f"<api>{tag}</api>" for tag in selected_tags])
                     
                     snippet_objects = [s for s in available_snippets if s["name"] in selected_snippets]
@@ -144,7 +154,6 @@ def main():
                         st.code(prompt, language="xml")
 
                     with st.spinner("Generating PySpark code... 🤖"):
-                        gemini_api_key = os.environ.get("GEMINI_API_KEY")
                         agent = Agent(model=Gemini(api_key=gemini_api_key))
                         response = agent.run(prompt)
 
