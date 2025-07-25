@@ -28,4 +28,14 @@ e = spark.createDataFrame([
 ], ["src", "dst", "relationship"])
 
 # Create a GraphFrame
-g = GraphFrame(v, e) 
+g = GraphFrame(v, e)
+
+# --- snippet: GraphFrames PageRank, tags: GraphX ---
+# Run PageRank
+results = g.pageRank(resetProbability=0.15, maxIter=10)
+results.vertices.show()
+
+# --- snippet: GraphFrames Motif Finding, tags: GraphX ---
+# Find motifs (patterns) in the graph
+motifs = g.find("(a)-[e]->(b); (b)-[e2]->(a)")
+motifs.show()

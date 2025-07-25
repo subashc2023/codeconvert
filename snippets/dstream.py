@@ -13,4 +13,14 @@ wordCounts = pairs.reduceByKey(lambda x, y: x + y)
 wordCounts.pprint()
 
 ssc.start()
-ssc.awaitTermination() 
+ssc.awaitTermination()
+
+# --- snippet: DStream File Stream, tags: DStream ---
+# Monitor a directory for new text files
+text_dstream = ssc.textFileStream("/tmp/streaming_data")
+text_dstream.pprint()
+
+# --- snippet: DStream Window Operations, tags: DStream ---
+# Count words over a window
+windowed_counts = wordCounts.reduceByKeyAndWindow(lambda x, y: x + y, windowDuration=30, slideDuration=10)
+windowed_counts.pprint()
